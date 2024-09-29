@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Fetch the .gitignore file from the remote repository
+curl -s https://raw.githubusercontent.com/loqwai/gitignore/refs/heads/main/.gitignore
