@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Check to see if the current was pushed up to remote previously. This is dependent
+# on git fetch not having been called with --prune yet. In the general case, we
+# expect the branch to no longer exist on remote, but for our local cache to not
+# reflect that yet. Use FORCE=true to override the sanity check
+sanity_check() {
+  local branch pr_status
+  branch="$1"
+
+  if [[ "$FORCE" == "true" ]]; then
+    return 0
+  fi
+
+  pr_status="$(gh pr status --json state --jq '.currentBranch.state')" \
+  || {
+    echo "Failed to find PR state for this branch. Cowardly refusing to do anything."
+    echo "Use FORCE=true to override."
+    exit 1
+  }
+
+  if [[ "$pr_status" == "MERGED" ]]; then
+    return 0
+  elif [[ -z "$pr_status" ]]; then
+    echo "It appears that there is no PR associated with the branch $branch. Cowardly refusing to do anything"
+    echo "Use FORCE=true to override this check."
+    exit 1
+  else
+    echo "PR associated with $branch has not been merged. Its status is $pr_status. Cowardly refusing to do anything."
+    echo "Use FORCE=true to override this check."
+    exit 1
+  fi
+}
+
+main(){
+  local current_branch
+
+  current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+  sanity_check "$current_branch" \
+  && git fetch --prune \
+  && git switch main \
+  && git merge --ff-only origin/main \
+  && git branch -D "$current_branch"
+}
+main "$@"

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+main(){
+  for branch in $(git branch | grep -v main); do 
+    git switch "$branch" && git cleanup
+  done
+}
+main "$@"

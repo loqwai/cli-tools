@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+main(){
+  watch -n 30 -g "$SCRIPT_DIR/refresh-dhcp"
+}
+main "$@"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+main(){
+  local current_branch
+
+  current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+  git fetch origin main:main \
+  && git merge main --no-edit
+}
+main "$@"
