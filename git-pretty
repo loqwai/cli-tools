@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Fetch the .prettierrc file from the remote repository
+curl https://raw.githubusercontent.com/loqwai/cli-tools/refs/heads/main/.prettierrc
